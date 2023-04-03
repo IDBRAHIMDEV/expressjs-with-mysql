@@ -1,33 +1,60 @@
-
-let myCourses = [
-    {
-        id: 1,
-        title: "Learn Nodejs"
-    },
-    {
-        id: 2,
-        title: "Learn Angular"
-    },
-]
+const connection = require('../config/db')
 
 
-const getAllCourses = (req, res) => res.send(myCourses)
+const getAllCourses = async (req, res) => {
+     // simple query
 
-const saveCourse = (req, res) => res.send({
-    message: "Course is saved",
-    course: {
-        id: 3,
-        title: "learn Vue 3"
+     try {
+        
+         const [result] = await connection.query('SELECT * FROM courses');
+         res.status(200).json(result)
+
+     } catch (error) {
+        res.status(500).json({
+            message: "server is down!"
+        })
+     }
+
+}
+
+const saveCourse = async (req, res) => {
+    
+    let { title, content } = req.body;
+
+    try {
+        
+        const result = await connection.query("INSERT INTO courses (title, content) VALUES (?, ?)", [title, content]);
+       
+        res.status(201).send(result)
+
+    } catch (error) {
+       res.status(500).json({
+           message: "server is down!"
+       })
     }
-})
+}
 
-const oneCourse = (req, res) => res.send({
-    message: "retreive one Course",
-    course: {
-        id: 3,
-        title: "learn Vue 3"
+const oneCourse = async (req, res) => {
+
+    const id = req.params.id;
+
+    try {
+        
+        const [result] = await connection.query(`SELECT * FROM courses WHERE id = ?`, [id]);
+
+        if(result.length == 0) {
+            return res.status(404).json({
+                message: "course is not found ! "
+            })
+        }
+        res.status(200).json(result)
+
+    } catch (error) {
+       res.status(500).json({
+           message: "server is down!"
+       })
     }
-})
+}
 
 const putCourse = (req, res) => res.send({
     message: "Course is updated",
