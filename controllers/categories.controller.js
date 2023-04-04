@@ -1,12 +1,12 @@
 const connection = require('../config/db')
 
 
-const getAllCourses = async (req, res) => {
+const getAllCategories = async (req, res) => {
      // simple query
 
      try {
         
-         const [result] = await connection.query('SELECT * FROM courses');
+         const [result] = await connection.query('SELECT * FROM categories');
          res.status(200).json(result)
 
      } catch (error) {
@@ -17,13 +17,13 @@ const getAllCourses = async (req, res) => {
 
 }
 
-const saveCourse = async (req, res) => {
+const saveCategory = async (req, res) => {
     
-    let { title, content } = req.body;
+    let { label } = req.body;
 
     try {
         
-        const result = await connection.query("INSERT INTO courses (title, content) VALUES (?, ?)", [title, content]);
+        const result = await connection.query("INSERT INTO categories (label) VALUES (?)", [label]);
        
         res.status(201).send(result)
 
@@ -34,17 +34,17 @@ const saveCourse = async (req, res) => {
     }
 }
 
-const oneCourse = async (req, res) => {
+const oneCategory = async (req, res) => {
 
     const id = req.params.id;
 
     try {
         
-        const [result] = await connection.query(`SELECT * FROM courses WHERE id = ?`, [id]);
+        const [result] = await connection.query(`SELECT * FROM categories WHERE id = ?`, [id]);
 
         if(result.length == 0) {
             return res.status(404).json({
-                message: "course is not found ! "
+                message: "category is not found ! "
             })
         }
         res.status(200).json(result)
@@ -56,12 +56,12 @@ const oneCourse = async (req, res) => {
     }
 }
 
-const putCourse = async (req, res) => {
+const putCategory = async (req, res) => {
 
     let id = req.params.id;
-    let { title, content } = req.body;
+    let { label } = req.body;
 
-    if( title == '' || content == '') {
+    if( label == '') {
 
         return res.status(400).send({
             message: "Bad request"
@@ -70,7 +70,7 @@ const putCourse = async (req, res) => {
 
     try {
         
-        const [result] = await connection.query("UPDATE courses SET title = ?, content = ? WHERE id = ?", [title, content, id]);
+        const [result] = await connection.query("UPDATE categories SET label = ? WHERE id = ?", [label, id]);
        
         if(result.affectedRows == 0) {
             return res.status(400).send({
@@ -87,13 +87,13 @@ const putCourse = async (req, res) => {
     }
 }
 
-const patchCourse = async (req, res) => {
+const patchCategory = async (req, res) => {
     let id = req.params.id;
-    let { title, content } = req.body;
+    let { label } = req.body;
 
     try {
         
-        const [result] = await connection.query("UPDATE courses SET title = IFNULL(?, title), content = IFNULL(?, content) WHERE id = ?", [title, content, id]);
+        const [result] = await connection.query("UPDATE categories SET label = IFNULL(?, label) WHERE id = ?", [label, id]);
        
         if(result.affectedRows == 0) {
             return res.status(400).send({
@@ -110,12 +110,12 @@ const patchCourse = async (req, res) => {
     }
 }
 
-const deleteCourse = async (req, res) => {
+const deleteCategory = async (req, res) => {
     let id = req.params.id;
     
     try {
         
-        const [result] = await connection.query("DELETE FROM courses WHERE id = ?", [id]);
+        const [result] = await connection.query("DELETE FROM categories WHERE id = ?", [id]);
        
         res.status(204).send({})
 
@@ -126,9 +126,9 @@ const deleteCourse = async (req, res) => {
     }
 }
 
-exports.getAllCourses = getAllCourses
-exports.oneCourse = oneCourse
-exports.putCourse = putCourse
-exports.saveCourse =saveCourse
-exports.patchCourse =patchCourse
-exports.deleteCourse =deleteCourse
+exports.getAllCategories = getAllCategories
+exports.oneCategory = oneCategory
+exports.putCategory = putCategory
+exports.saveCategory =saveCategory
+exports.patchCategory =patchCategory
+exports.deleteCategory =deleteCategory
