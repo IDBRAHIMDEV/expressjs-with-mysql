@@ -1,10 +1,12 @@
 const express = require('express')
-const { getAllArticles, saveArticle, oneArticle, putArticle, patchArticle, deleteArticle } = require('../controllers/articles.controller')
+const { getAllArticles, createArticle, saveArticle, oneArticle, putArticle, patchArticle, deleteArticle } = require('../controllers/articles.controller')
 
 const router = express.Router()
 
 
 router.get('/articles', getAllArticles)
+
+router.get('/articles/create', createArticle)
 
 router.post('/articles', saveArticle)
 

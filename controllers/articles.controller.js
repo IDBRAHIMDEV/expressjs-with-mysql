@@ -1,13 +1,18 @@
 const connection = require('../config/db')
 
 
+const createArticle = async (req, res) => {
+    res.render('article/create.ejs')
+}
+
 const getAllArticles = async (req, res) => {
      // simple query
 
      try {
         
          const [result] = await connection.query('SELECT * FROM articles');
-         res.status(200).json(result)
+         console.log(result)
+         res.render('article/index.ejs', {articles: result})
 
      } catch (error) {
         res.status(500).json({
@@ -128,6 +133,7 @@ const deleteArticle = async (req, res) => {
 
 exports.getAllArticles = getAllArticles
 exports.oneArticle = oneArticle
+exports.createArticle = createArticle
 exports.putArticle = putArticle
 exports.saveArticle =saveArticle
 exports.patchArticle =patchArticle
